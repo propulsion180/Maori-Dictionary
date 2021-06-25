@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ categoryname|title }}{% endblock %}
+
+{% block heading %}{{ categoryname|title }}{% endblock %}
+
+{% block main %}
+    {% for word in words %}
+         <div class="word-box" onclick="window.location = '/wordpage?word={{ word[0] }}'">
+            <h3>{{ word[1] }}</h3>
+            <p>{{ word[2] }}</p>
+            <p><strong>Category:</strong>{{ categoryname|title }}</p>
+            <p><strong>Level:</strong>{{ word[4] }}</p>
+            <img src="static/images/{{ word[6] }}.png">
+        </div>
+    {% endfor %}
+{% endblock %}

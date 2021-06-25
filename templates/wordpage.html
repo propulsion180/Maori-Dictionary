@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}{% endblock %}
+
+{% block heading %}{% endblock %}
+
+{% block main %}
+    <div class="word-box" >
+        <h3>{{ oneword[0] }}</h3>
+        <p>{{ oneword[1] }}</p>
+        <p><strong>Category:</strong>{{ oneword[2] }}</p>
+        <p><strong>Level:</strong>{{ oneword[4] }}</p>
+        <img src="static/images/{{ oneword[5] }}.png">
+    </div>
+
+{% endblock %}
