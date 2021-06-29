@@ -157,6 +157,9 @@ def render_addword():
 		con.close()
 	return return_page('addword.html')
 
+@app.route('/login', methods=['GET', 'POST'])
+def render_login():
+	return return_page('login.html')
 
 
 if __name__ == '__main__':
