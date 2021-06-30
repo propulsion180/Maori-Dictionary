@@ -5,7 +5,6 @@ from sqlite3 import Error
 
 
 app = Flask(__name__)
-
 bcrypt = Bcrypt(app)
 app.secret_key = "adfaef3234fwef4rg423refaewsf"
 
@@ -57,7 +56,7 @@ def render_categorypage():
 
 	con = create_connection("maori_dictionary.db")
 
-	query = "SELECT id, maori, english, category, definintion, level, picture FROM dictionary_values WHERE category=?"
+	query = "SELECT id, maori, english, category, definition, level, picture FROM dictionary_values WHERE category=?"
 
 	cur = con.cursor()
 	cur.execute(query, (categoryid, ))
@@ -82,7 +81,7 @@ def render_wordpage():
 
 	con = create_connection("maori_dictionary.db")
 
-	query = "SELECT maori, english, category, definintion, level, picture FROM dictionary_values WHERE id=?"
+	query = "SELECT maori, english, category, definition, level, picture FROM dictionary_values WHERE id=?"
 
 	cur = con.cursor()
 	cur.execute(query, (id, ))
