@@ -158,7 +158,33 @@ def render_addword():
 
 @app.route('/login', methods=['GET', 'POST'])
 def render_login():
-	return return_page('login.html')
+	  if request.method == "POST":
+	  	email = request.form['email'].strip().lower()
+		password = request.form['password'].strip()
+
+		query = "SELECT id, fname, password FROM users WHERE email = ?"
+		con = create_connection('maori_dictionary.db')
+		cur = con.cursor()
+		cur.execute(query, (email,))
+		user_data = cur.fetchall()
+		con.close()
+		# if given the email is not in the database this will raise an error
+		# would be better to find out how to see if the query return an empty resultset
+		try:
+			userid = user_data[0][0]
+			fname = user_data[0][1]
+			db_password = user_data[0][2]
+		except IndexError:
+			return redirect("/login?error=Email+fnameinvalid+or+password+incorrect")
+
+		# check if the password is incorrect for that email address
+
+		if not bcrypt.check_password_hash(db_password, password):
+			return redirect(request.referrer + "?error=Email+invalid+or+password+incorrect")
+
+	  return redirect('/')
+
+	  return return_page('login.html')
 
 
 if __name__ == '__main__':
