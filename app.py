@@ -34,7 +34,9 @@ def return_page(page, **extras):
 def render_home():
     if is_logged_in():
         print("logged in")
-    return return_page('home.html')
+
+    print(session)
+    return return_page('home.html', logged_in=is_logged_in())
 
 
 @app.route('/words', methods=['GET', 'POST'])
@@ -205,6 +207,13 @@ def is_logged_in():
         print("logged in")
         return True
 
+
+@app.route('/logout')
+def logout():
+    print(list(session.keys()))
+    [session.pop(key) for key in list(session.keys())]
+    print(list(session.keys()))
+    return redirect('/?message=See+you+next+time!')
 
 if __name__ == '__main__':
     app.run()
