@@ -1,5 +1,5 @@
 from flask_bcrypt import Bcrypt
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session
 import sqlite3
 from sqlite3 import Error
 
@@ -32,6 +32,8 @@ def return_page(page, **extras):
 
 @app.route('/')
 def render_home():
+    if is_logged_in():
+        print("logged in")
     return return_page('home.html')
 
 
@@ -159,13 +161,13 @@ def render_addword():
 @app.route('/login', methods=['GET', 'POST'])
 def render_login():
       if request.method == "POST":
-        email = request.form['email'].strip().lower()
+        email_account = request.form['email'].strip().lower()
         password = request.form['password'].strip()
 
         query = "SELECT id, fname, password FROM users WHERE email = ?"
         con = create_connection('maori_dictionary.db')
         cur = con.cursor()
-        cur.execute(query, (email,))
+        cur.execute(query, (email_account,))
         user_data = cur.fetchall()
         con.close()
         # if given the email is not in the database this will raise an error
@@ -174,6 +176,8 @@ def render_login():
             userid = user_data[0][0]
             fname = user_data[0][1]
             db_password = user_data[0][2]
+            email = email_account
+            print("stuffs good")
         except IndexError:
             return redirect("/login?error=Email+fnameinvalid+or+password+incorrect")
 
@@ -182,9 +186,24 @@ def render_login():
         if not bcrypt.check_password_hash(db_password, password):
             return redirect(request.referrer + "?error=Email+invalid+or+password+incorrect")
 
-      return redirect('/')
+        session['email'] = email
+        session['userid'] = userid
+        session['firstname'] = fname
 
-      return return_page('login.html')
+        print(session)
+
+
+
+      return return_page('login.html', logged_in=is_logged_in())
+
+
+def is_logged_in():
+    if session.get("email") is None:
+        print("not logged in")
+        return False
+    else:
+        print("logged in")
+        return True
 
 
 if __name__ == '__main__':
