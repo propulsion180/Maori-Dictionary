@@ -3,7 +3,6 @@ from flask import Flask, render_template, request, redirect, session
 import sqlite3
 from sqlite3 import Error
 
-
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 app.secret_key = "adfaef3234fwef4rg423refaewsf"
@@ -63,7 +62,7 @@ def render_categorypage():
     query = "SELECT id, maori, english, category, definition, level, picture FROM dictionary_values WHERE category=?"
 
     cur = con.cursor()
-    cur.execute(query, (categoryid, ))
+    cur.execute(query, (categoryid,))
     words = cur.fetchall()
     print(words)
     con.close()
@@ -73,7 +72,7 @@ def render_categorypage():
     query = "SELECT categoryid, category  FROM category WHERE categoryid=?"
 
     cur = con.cursor()
-    cur.execute(query, (categoryid, ))
+    cur.execute(query, (categoryid,))
     categoryname = cur.fetchall()[0][1]
     return return_page('categorypage.html', words=words, categoryname=categoryname)
 
@@ -88,7 +87,7 @@ def render_wordpage():
     query = "SELECT maori, english, category, definition, level, picture FROM dictionary_values WHERE id=?"
 
     cur = con.cursor()
-    cur.execute(query, (id, ))
+    cur.execute(query, (id,))
 
     one = cur.fetchall()[0]
     print(one)
@@ -114,7 +113,6 @@ def render_signup():
             return redirect('/signup?error=Password+must+be+8+characters+or+more')
 
         hashed_password = bcrypt.generate_password_hash(password)
-
 
         con = create_connection('maori_dictionary.db')
 
@@ -160,9 +158,10 @@ def render_addword():
         con.close()
     return return_page('addword.html')
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def render_login():
-      if request.method == "POST":
+    if request.method == "POST":
         email_account = request.form['email'].strip().lower()
         password = request.form['password'].strip()
 
@@ -194,9 +193,7 @@ def render_login():
 
         print(session)
 
-
-
-      return return_page('login.html', logged_in=is_logged_in())
+    return return_page('login.html', logged_in=is_logged_in())
 
 
 def is_logged_in():
@@ -208,12 +205,43 @@ def is_logged_in():
         return True
 
 
+@app.route('/delete_category', methods=['GET', 'POST'])
+def render_deletecategory():
+    if request.method == "POST":
+        category = request.form.get('category').strip().lower()
+
+        print(category)
+
+        con = create_connection('maori_dictionary.db')
+
+        query = "DELETE FROM dictionary_values (maori, english, category, definition, level) WHERE category = ?"
+
+        cur = con.cursor()
+        cur.execute(query, category)
+        con.commit()
+        con.close()
+
+        con = create_connection('maori_dictionary.db')
+
+        query = "DELETE FROM category (categoryid, category) WHERE category = ?"
+
+        cur = con.cursor()
+        cur.execute(query, category)
+        con.commit()
+        con.close()
+
+        print("all done")
+
+    return return_page('delete_category.html', logged_in=is_logged_in())
+
+
 @app.route('/logout')
 def logout():
     print(list(session.keys()))
     [session.pop(key) for key in list(session.keys())]
     print(list(session.keys()))
     return redirect('/?message=See+you+next+time!')
+
 
 if __name__ == '__main__':
     app.run()
