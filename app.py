@@ -208,29 +208,36 @@ def is_logged_in():
 @app.route('/delete_category', methods=['GET', 'POST'])
 def render_deletecategory():
     if request.method == "POST":
-        category = request.form.get('category').strip().lower()
+        if is_logged_in():
+            category = request.form.get('category').strip().lower()
 
-        print(category)
+            print(category)
 
-        con = create_connection('maori_dictionary.db')
+            con = create_connection("maori_dictionary.db")
+            query = "SELECT categoryid FROM category WHERE category = ?"
+            cur = con.cursor()
+            cur.execute(query, (category,))
+            categoryid = (cur.fetchall()[0])[0]
+            print(categoryid)
+            con.close
 
-        query = "DELETE FROM dictionary_values (maori, english, category, definition, level) WHERE category = ?"
+            con = create_connection('maori_dictionary.db')
+            query = "DELETE FROM dictionary_values WHERE category = ?"
+            cur = con.cursor()
+            cur.execute(query, (categoryid,))
+            con.commit()
+            con.close()
 
-        cur = con.cursor()
-        cur.execute(query, category)
-        con.commit()
-        con.close()
+            con = create_connection('maori_dictionary.db')
+            query = "DELETE FROM category WHERE category = ?"
+            cur = con.cursor()
+            cur.execute(query, (category,))
+            con.commit()
+            con.close()
 
-        con = create_connection('maori_dictionary.db')
-
-        query = "DELETE FROM category (categoryid, category) WHERE category = ?"
-
-        cur = con.cursor()
-        cur.execute(query, category)
-        con.commit()
-        con.close()
-
-        print("all done")
+            print("all done")
+        else:
+            return redirect('/')
 
     return return_page('delete_category.html', logged_in=is_logged_in())
 
