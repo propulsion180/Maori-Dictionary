@@ -196,21 +196,11 @@ def render_login():
     return return_page('login.html', logged_in=is_logged_in())
 
 
-def is_logged_in():
-    if session.get("email") is None:
-        print("not logged in")
-        return False
-    else:
-        print("logged in")
-        return True
-
-
 @app.route('/delete_category', methods=['GET', 'POST'])
 def render_deletecategory():
     if request.method == "POST":
         if is_logged_in():
             category = request.form.get('category').strip().lower()
-
             print(category)
 
             con = create_connection("maori_dictionary.db")
@@ -219,7 +209,7 @@ def render_deletecategory():
             cur.execute(query, (category,))
             categoryid = (cur.fetchall()[0])[0]
             print(categoryid)
-            con.close
+
 
             con = create_connection('maori_dictionary.db')
             query = "DELETE FROM dictionary_values WHERE category = ?"
@@ -227,7 +217,6 @@ def render_deletecategory():
             cur.execute(query, (categoryid,))
             con.commit()
             con.close()
-
             con = create_connection('maori_dictionary.db')
             query = "DELETE FROM category WHERE category = ?"
             cur = con.cursor()
@@ -242,12 +231,43 @@ def render_deletecategory():
     return return_page('delete_category.html', logged_in=is_logged_in())
 
 
+@app.route('/add_category', methods=['GET', 'POST'])
+def render_addcategory():
+    if request.method == "POST":
+        if is_logged_in():
+            category_name = request.form.get("category_name").strip().lower()
+            print(category_name)
+            print(category_name)
+
+            con = create_connection('maori_dictionary.db')
+            query = "INSERT INTO category (category) VALUES(?)"
+            cur = con.cursor()
+            try:
+                cur.execute(query, (category_name,))  # this line actually executes the query
+            except sqlite3.IntegrityError:
+                return redirect('/add_category?error=you+screwed+something+up')
+            con.commit()
+            con.close()
+        else:
+            return redirect('/')
+    return return_page('add_category.html', logged_in=is_logged_in())
+
+
 @app.route('/logout')
 def logout():
     print(list(session.keys()))
     [session.pop(key) for key in list(session.keys())]
     print(list(session.keys()))
     return redirect('/?message=See+you+next+time!')
+
+
+def is_logged_in():
+    if session.get("email") is None:
+        print("not logged in")
+        return False
+    else:
+        print("logged in")
+        return True
 
 
 if __name__ == '__main__':
