@@ -156,7 +156,7 @@ def render_addword():
 
         con.commit()
         con.close()
-    return return_page('addword.html')
+    return return_page('addword.html', logged_in=is_logged_in())
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -198,37 +198,27 @@ def render_login():
 
 @app.route('/delete_category', methods=['GET', 'POST'])
 def render_deletecategory():
-    if request.method == "POST":
-        if is_logged_in():
-            category = request.form.get('category').strip().lower()
-            print(category)
+    categoryid = request.args.get("categoryid")
 
-            con = create_connection("maori_dictionary.db")
-            query = "SELECT categoryid FROM category WHERE category = ?"
-            cur = con.cursor()
-            cur.execute(query, (category,))
-            categoryid = (cur.fetchall()[0])[0]
-            print(categoryid)
+    print(categoryid)
 
+    con = create_connection('maori_dictionary.db')
+    query = "DELETE FROM dictionary_values WHERE category = ?"
+    cur = con.cursor()
+    cur.execute(query, (categoryid,))
+    con.commit()
+    con.close()
 
-            con = create_connection('maori_dictionary.db')
-            query = "DELETE FROM dictionary_values WHERE category = ?"
-            cur = con.cursor()
-            cur.execute(query, (categoryid,))
-            con.commit()
-            con.close()
-            con = create_connection('maori_dictionary.db')
-            query = "DELETE FROM category WHERE category = ?"
-            cur = con.cursor()
-            cur.execute(query, (category,))
-            con.commit()
-            con.close()
+    con = create_connection('maori_dictionary.db')
+    query = "DELETE FROM category WHERE category = ?"
+    cur = con.cursor()
+    cur.execute(query, (categoryid,))
+    con.commit()
+    con.close()
 
-            print("all done")
-        else:
-            return redirect('/')
+    print("all done")
 
-    return return_page('delete_category.html', logged_in=is_logged_in())
+    return redirect('/')
 
 
 @app.route('/add_category', methods=['GET', 'POST'])

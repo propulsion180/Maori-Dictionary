@@ -2,7 +2,12 @@
 
 {% block title %}{{ categoryname|title }}{% endblock %}
 
-{% block heading %}{{ categoryname|title }}{% endblock %}
+{% block heading %}
+{{ categoryname|title }}
+
+<a href="/delete_category?categoryid={{ words[3] }}">DeleteCategory</a>
+
+{% endblock %}
 
 {% block main %}
     {% for word in words %}
