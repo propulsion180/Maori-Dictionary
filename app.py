@@ -32,11 +32,12 @@ def return_page(page, **extras):
 
 @app.route('/')
 def render_home():
+    message = request.args.get("message")
     if is_logged_in():
         print("logged in")
 
     print(session)
-    return return_page('home.html', logged_in=is_logged_in())
+    return return_page('home.html', message=message, logged_in=is_logged_in())
 
 
 @app.route('/words', methods=['GET', 'POST'])
@@ -219,7 +220,7 @@ def render_login():
         session['firstname'] = fname
 
         print(session)
-
+        return redirect("/?message=You have logged in as " + fname)
     return return_page('login.html', logged_in=is_logged_in())
 
 

@@ -8,12 +8,14 @@
 
 {% if logged_in is true %}
     Hello {{ session['firstname'] }}
+    <button onclick="window.location.href = '\add_category'">Add Category</button>
+    <button onclick="window.location.href = '\addword">Add Word</button>
 
-    <a href="\add_category">Add Category</a>
-    <a href="\addword">Add Word</a>
 {% endif %}
 <br>
 <br>
 This is the main page of my Maori Dictionary. click on the three lines or click on a category to see maori words and their meanings.
 
+
+{{ message }}
 {% endblock %}
