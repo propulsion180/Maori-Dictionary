@@ -2,6 +2,7 @@ from flask_bcrypt import Bcrypt
 from flask import Flask, render_template, request, redirect, session
 import sqlite3
 from sqlite3 import Error
+from datetime import *
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
@@ -30,9 +31,16 @@ def return_page(page, **extras):
     return render_template(page, categories=categorylist, **extras)
 
 
+def get_datetime():
+    date = datetime.now()
+    return date.strftime("%d/%m/%Y")
+
+
 @app.route('/')
 def render_home():
     message = request.args.get("message")
+
+    print(get_datetime())
     if is_logged_in():
         print("logged in")
 
@@ -88,7 +96,7 @@ def render_wordpage():
 
     con = create_connection("maori_dictionary.db")
 
-    query = "SELECT id, maori, english, category, definition, level, picture, userid FROM dictionary_values WHERE id=?"
+    query = "SELECT id, maori, english, category, definition, level, picture, userid, datetime_modified FROM dictionary_values WHERE id=?"
 
     cur = con.cursor()
     cur.execute(query, (id,))
@@ -167,18 +175,19 @@ def render_addword():
         definition = request.form.get('definition').title()
         userid = session['userid']
         image = "noimage"
+        datetime = get_datetime()
 
         print(level)
 
         con = create_connection('maori_dictionary.db')
 
-        query = "INSERT INTO dictionary_values (maori, english, category, definition, level, picture, userid) " \
-                "VALUES(?,?,?,?,?,?,?)"
+        query = "INSERT INTO dictionary_values (maori, english, category, definition, level, picture, userid, datetime_modified) " \
+                "VALUES(?,?,?,?,?,?,?,?)"
 
         cur = con.cursor()  # You need this line next
 
         try:
-            cur.execute(query, (maori, english, category, definition, level, image, userid))  # this line actually executes the query
+            cur.execute(query, (maori, english, category, definition, level, image, userid, datetime))  # this line actually executes the query
         except sqlite3.IntegrityError:
             return redirect('/addwords?error=you+screwed+something+up')
 
@@ -288,7 +297,7 @@ def deleteword():
 @app.route('/editword', methods=['GET', 'POST'])
 def render_editwordpage():
     wordid = request.args.get("id")
-
+    datetime = get_datetime()
     con = create_connection('maori_dictionary.db')
     query = "SELECT maori, english, category, definition, level FROM dictionary_values WHERE id = ?"
     cur = con.cursor()
@@ -297,11 +306,11 @@ def render_editwordpage():
     con.commit()
     con.close()
 
-    new_maori = request.form.get("maori").strip().lower()
-    new_english = request.form.get("english").strip().lower()
-    new_category = request.form.get("category")
-    new_level = request.form.get("level")
-    new_definiton = request.form.get("definition").title()
+    # new_maori = request.form.get("maori").strip().lower()
+    # new_english = request.form.get("english").strip().lower()
+    # new_category = request.form.get("category")
+    # new_level = request.form.get("level")
+    # new_definiton = request.form.get("definition").title()
 
     return return_page('editword.html', word_list=word_list, logged_in=is_logged_in())
 
