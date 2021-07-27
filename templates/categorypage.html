@@ -4,14 +4,14 @@
 
 {% block heading %}
 {{ categoryname|title }}
-
-<a href="/delete_category?categoryid={{ words[3] }}">DeleteCategory</a>
-
+{% if logged_in is true %}
+<a href="/delete_category?category={{ (words[0])[3] }}">DeleteCategory</a>
+{% endif %}
 {% endblock %}
 
 {% block main %}
     {% for word in words %}
-         <div class="word-box" onclick="window.location = '/wordpage?word={{ word[0] }}'">
+         <div class="word-box" onclick="window.location = '/wordpage?word={{ word[0] }}&category={{ categoryname }}'">
             <h3>{{ word[1] }}</h3>
             <p>{{ word[2] }}</p>
             <p><strong>Category:</strong>{{ categoryname|title }}</p>

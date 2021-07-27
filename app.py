@@ -24,6 +24,7 @@ def return_page(page, **extras):
     cur = con.cursor()
     cur.execute(query)
     categorylist = dict(cur.fetchall())
+    print(categorylist)
     con.close
 
     return render_template(page, categories=categorylist, **extras)
@@ -74,26 +75,48 @@ def render_categorypage():
     cur = con.cursor()
     cur.execute(query, (categoryid,))
     categoryname = cur.fetchall()[0][1]
-    return return_page('categorypage.html', words=words, categoryname=categoryname)
+    con.close()
+    return return_page('categorypage.html', words=words, categoryname=categoryname, logged_in=is_logged_in())
 
 
 @app.route('/wordpage')
 def render_wordpage():
     id = request.args.get("word")
+    categoryname = request.args.get("category")
     print(id)
 
     con = create_connection("maori_dictionary.db")
 
-    query = "SELECT maori, english, category, definition, level, picture FROM dictionary_values WHERE id=?"
+    query = "SELECT id, maori, english, category, definition, level, picture, userid FROM dictionary_values WHERE id=?"
 
     cur = con.cursor()
     cur.execute(query, (id,))
-
+    print(cur.fetchall)
     one = cur.fetchall()[0]
+    userid = one[7]
+    print(userid)
     print(one)
     con.close()
 
-    return return_page('wordpage.html', oneword=one)
+    con = create_connection("maori_dictionary.db")
+
+    query = "SELECT fname, lname, email FROM users WHERE id=?"
+
+    cur = con.cursor()
+    cur.execute(query, (userid,))
+
+    details = cur.fetchall()
+    print(details[0])
+
+    fname = details[0][0]
+    lname = details[0][1]
+    email = details[0][2]
+
+    print(fname + lname + email)
+
+    con.close()
+
+    return return_page('wordpage.html', oneword=one, category=categoryname, logged_in=is_logged_in(), fname=fname, lname=lname, email=email)
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -138,19 +161,23 @@ def render_addword():
         print(request.form)
         maori = request.form.get('maori').strip()
         english = request.form.get('english').strip()
-        category = request.form.get('category').strip()
+        category = request.form.get('category')
         level = request.form.get('level')
         definition = request.form.get('definition').title()
+        userid = session['userid']
+        image = "noimage"
+
+        print(level)
 
         con = create_connection('maori_dictionary.db')
 
-        query = "INSERT INTO dictionary_values (maori, english, category, definition, level) " \
-                "VALUES(?,?,?,?,?)"
+        query = "INSERT INTO dictionary_values (maori, english, category, definition, level, picture, userid) " \
+                "VALUES(?,?,?,?,?,?,?)"
 
         cur = con.cursor()  # You need this line next
 
         try:
-            cur.execute(query, (maori, english, category, definition, level))  # this line actually executes the query
+            cur.execute(query, (maori, english, category, definition, level, image, userid))  # this line actually executes the query
         except sqlite3.IntegrityError:
             return redirect('/addwords?error=you+screwed+something+up')
 
@@ -198,23 +225,22 @@ def render_login():
 
 @app.route('/delete_category', methods=['GET', 'POST'])
 def render_deletecategory():
-    categoryid = request.args.get("categoryid")
-
-    print(categoryid)
+    categoryId = request.args.get("category")
+    print(categoryId)
 
     con = create_connection('maori_dictionary.db')
     query = "DELETE FROM dictionary_values WHERE category = ?"
     cur = con.cursor()
-    cur.execute(query, (categoryid,))
+    cur.execute(query, (categoryId,))
+    con.commit()
+    con.close()
+    con = create_connection('maori_dictionary.db')
+    query = "DELETE FROM category WHERE categoryid = ?"
+    cur = con.cursor()
+    cur.execute(query, (categoryId,))
     con.commit()
     con.close()
 
-    con = create_connection('maori_dictionary.db')
-    query = "DELETE FROM category WHERE category = ?"
-    cur = con.cursor()
-    cur.execute(query, (categoryid,))
-    con.commit()
-    con.close()
 
     print("all done")
 
@@ -241,6 +267,44 @@ def render_addcategory():
         else:
             return redirect('/')
     return return_page('add_category.html', logged_in=is_logged_in())
+
+
+@app.route('/delete_word', methods=['GET', 'POST'])
+def deleteword():
+    wordid = request.args.get("word")
+    print(wordid)
+
+    con = create_connection('maori_dictionary.db')
+    query = "DELETE FROM dictionary_values WHERE id = ?"
+    cur = con.cursor()
+    cur.execute(query, (wordid,))
+    con.commit()
+    con.close()
+    print("all done")
+    return redirect('/')
+
+
+@app.route('/editword', methods=['GET', 'POST'])
+def render_editwordpage():
+    wordid = request.args.get("id")
+
+    con = create_connection('maori_dictionary.db')
+    query = "SELECT maori, english, category, definition, level FROM dictionary_values WHERE id = ?"
+    cur = con.cursor()
+    cur.execute(query, (wordid,))
+    word_list = cur.fetchall()
+    con.commit()
+    con.close()
+
+    new_maori = request.form.get("maori").strip().lower()
+    new_english = request.form.get("english").strip().lower()
+    new_category = request.form.get("category")
+    new_level = request.form.get("level")
+    new_definiton = request.form.get("definition").title()
+
+    return return_page('editword.html', word_list=word_list, logged_in=is_logged_in())
+
+
 
 
 @app.route('/logout')

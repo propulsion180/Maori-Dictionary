@@ -2,15 +2,23 @@
 
 {% block title %}Word{% endblock %}
 
-{% block heading %}Word{% endblock %}
+{% block heading %}Word
+{% if logged_in is true %}
+    <a href="/delete_word?word={{ oneword[0] }}">Delete Word</a>
+{% endif %}
+{% endblock %}
 
 {% block main %}
     <div class="word-box" >
-        <h3>{{ oneword[0] }}</h3>
-        <p>{{ oneword[1] }}</p>
-        <p><strong>Category:</strong>{{ oneword[2] }}</p>
-        <p><strong>Level:</strong>{{ oneword[4] }}</p>
-        <img src="static/images/{{ oneword[5] }}.png">
+        <h3>{{ oneword[1] }}</h3>
+        <p>{{ oneword[2] }}</p>
+        <p><strong>Category:</strong>{{ category|title }}</p>
+        <p><strong>Definition:</strong>{{ oneword[4] }}</p>
+        <p><strong>Level:</strong>{{ oneword[5] }}</p>
+        <img src="static/images/{{ oneword[6] }}.png">
+        <p>{{ fname }} {{ lname }} added this. Editor's email is {{ email }}</p>
     </div>
 
+
+    <button onclick="window.location.href = '/editword?id=' + {{ oneword[0] }}">Edit</button>
 {% endblock %}

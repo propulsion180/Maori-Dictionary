@@ -1,19 +1,19 @@
 {% extends 'base.html' %}
 
-{% block title %}Add a Word{% endblock %}
+{% block title %}Edit a word{% endblock %}
 
-{% block heading %}Add a Word{% endblock %}
+{% block heading %}Edit a word{% endblock %}
 
 {% block main %}
-     <form class="dataForm" method="post">
+<form class="dataForm" method="post">
       <div class="form-group">
             <div class="form-label"><label for="maori">Maori:</label></div>
-            <div class="form-element"><input type="text" name="maori" id="maori" value=""</div>
+            <div class="form-element"><input type="text" name="maori" id="maori" value="{{ word_list[0][0] }}" ></div>
         </div>
 
         <div class="form-group">
             <div class="form-label"><label for="english">English:</label></div>
-            <div class="form-element"><input type="text" name="english" id="english" required></div>
+            <div class="form-element"><input type="text" name="english" id="english" value="{{ word_list[0][1] }}"></div>
         </div>
 
         <div class="form-group">
@@ -21,7 +21,7 @@
             <div class="form-element">
                 <select name='category' id='category' style="width: 100%; border-radius: 10px; padding: 0.3rem; margin-bottom: 10px;">
                     {% for  category in categories %}
-                        <option value="{{ category }}"> {{ categories[category] }}</option>
+                        <option value="{{ category }}" > {{ categories[category] }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -40,7 +40,7 @@
 
         <div class="form-group">
             <div class="form-label"><label for="definition">Definition:</label></div>
-            <div class="form-element"><input type="text" name="definition" id="definition" required></div>
+            <div class="form-element"><input type="text" name="definition" id="definition" value="{{ word_list[0][3] }}"></div>
         </div>
 
         <div class="form-group">
@@ -54,4 +54,5 @@
         </div>
     </form>
 
+    {{ word_list }}
 {% endblock %}
