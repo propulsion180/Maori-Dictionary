@@ -39,7 +39,7 @@ def get_datetime():
 def duplicate_check(m, e, c, d, l):
     con = create_connection("maori_dictionary.db")
 
-    query = "SELECT maori, english, category, definintion, level, picture FROM dictionary_values WHERE maori=?, english=?, category=?, definition=?, level=?"
+    query = "SELECT maori, english, category, definition, level, picture FROM dictionary_values WHERE maori=? and english=? and category=? and definition=? and level=?"
 
     cur = con.cursor()
     cur.execute(query, (m, e, c, d, l))
@@ -47,16 +47,17 @@ def duplicate_check(m, e, c, d, l):
     print(values)
     con.close()
 
+    if values == None:
+        return False
+    else:
+        return True
+
 
 def validity_checker(m, e, c, d, l):
-    if m <= 0 or e <= 0 or  c 0 or d == 0 or l =
-
-
-    if values == None:
-        return false
+    if len(m) <= 0 or len(e) <= 0 or c == 0 or len(d) == 0 or l == 0 or int(l) > 10:
+        return False
     else:
-        return true
-
+        return True
 
 
 @app.route('/')
@@ -106,9 +107,9 @@ def render_categorypage():
 
     cur = con.cursor()
     cur.execute(query, (categoryid,))
-    categoryname = cur.fetchall()[0][1]
+    categoryname = cur.fetchall()[0]
     con.close()
-    return return_page('categorypage.html', words=words, categoryname=categoryname, logged_in=is_logged_in())
+    return return_page('categorypage.html', words=words, category=categoryname, logged_in=is_logged_in())
 
 
 @app.route('/wordpage')
@@ -201,8 +202,10 @@ def render_addword():
         datetime = get_datetime()
 
         print(level)
-        if duplicate_check(maori, english, category, definition, level) == true :
+        if duplicate_check(maori, english, category, definition, level) == False:
             return redirect('/?message=Sorry but this word all ready exists. Please check existing words.')
+        elif validity_checker(maori, english, category, definition, level) == False:
+            return redirect('/?message=Sorry but the valuse that you inputed are invalid. Please try again.')
         else:
 
             con = create_connection('maori_dictionary.db')
@@ -281,7 +284,7 @@ def render_deletecategory():
 
     print("all done")
 
-    return redirect('/')
+    return redirect('/?message=You have deleted a category ')
 
 
 @app.route('/add_category', methods=['GET', 'POST'])
@@ -318,7 +321,7 @@ def deleteword():
     con.commit()
     con.close()
     print("all done")
-    return redirect('/')
+    return redirect('/?message=You have deleted a word.')
 
 
 @app.route('/editword', methods=['GET', 'POST'])

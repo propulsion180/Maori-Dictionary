@@ -1,26 +1,26 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ categoryname|title }}{% endblock %}
+{% block title %}{{ category[1]|title }}{% endblock %}
 
 {% block heading %}
 {{ categoryname|title }}
 {% if logged_in is true %}
-<a href="/delete_category?category={{ (words[0])[3] }}">DeleteCategory</a>
+     <button onclick="window.location.href = '/delete_category?category={{ category[0] }}'" style="height: 50px; width: 100px" align="center">Delete Category</button>
+
 {% endif %}
 {% endblock %}
 
 {% block main %}
-    {% if words == NULL %}
+    {% if words|length == 0 %}
         <p>
             There is no words in this category. Please add some using the addword button on the home page.
         </p>
     {% else %}
-
         {% for word in words %}
              <div class="word-box" onclick="window.location = '/wordpage?word={{ word[0] }}&category={{ categoryname }}'">
                 <h3>{{ word[1] }}</h3>
                 <p>{{ word[2] }}</p>
-                <p><strong>Category:</strong>{{ categoryname|title }}</p>
+                <p><strong>Category:</strong>{{ category[1]|title }}</p>
                 <p><strong>Level:</strong>{{ word[4] }}</p>
                 <img src="static/images/{{ word[6] }}.png">
             </div>

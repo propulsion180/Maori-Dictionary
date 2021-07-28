@@ -4,7 +4,9 @@
 
 {% block heading %}Word
 {% if logged_in is true %}
-    <button onclick="window.location.href = '/delete_word?word={{ oneword[0] }}'" style="height: 50px; width: 100px">Delete Word</button>
+    <button id="delete button" onclick="window.location.href = '/delete_word?word={{ oneword[0] }}'" style="height: 50px; width: 100px">Delete Word</button>
+    <button id="delete button" onclick="if(window.confirm('Are you sure you want to do this karl?')) {window.location.href = '/delete_word?word={{ oneword[0] }}'}"> </button>
+
 {% endif %}
 {% endblock %}
 
