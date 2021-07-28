@@ -306,11 +306,25 @@ def render_editwordpage():
     con.commit()
     con.close()
 
-    # new_maori = request.form.get("maori").strip().lower()
-    # new_english = request.form.get("english").strip().lower()
-    # new_category = request.form.get("category")
-    # new_level = request.form.get("level")
-    # new_definiton = request.form.get("definition").title()
+    new_maori = request.form.get("maori").lower()
+    new_english = request.form.get("english").strip().lower()
+    new_category = request.form.get("category")
+    new_level = request.form.get("level")
+    new_definiton = request.form.get("definition").title()
+
+    con = create_connection('maori_dictionary.db')
+    query = "INSERT INTO dictionary_values (maori, english, category, definition, level, datetime_modified) " \
+            "VALUES(?,?,?,?,?,?)"
+
+    cur = con.cursor()
+    try:
+        cur.execute(query, (new_maori, new_english, new_category, new_definition, new_level, datetime))  # this line actually executes the query
+    except sqlite3.IntegrityError:
+        return redirect('/?message=you+screwed+something+up')
+
+    con.commit()
+    con.close()
+    print(editted)
 
     return return_page('editword.html', word_list=word_list, logged_in=is_logged_in())
 
