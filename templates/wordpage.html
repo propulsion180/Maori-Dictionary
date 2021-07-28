@@ -4,7 +4,7 @@
 
 {% block heading %}Word
 {% if logged_in is true %}
-    <a href="/delete_word?word={{ oneword[0] }}">Delete Word</a>
+    <button onclick="window.location.href = '/delete_word?word={{ oneword[0] }}'" style="height: 50px; width: 100px">Delete Word</button>
 {% endif %}
 {% endblock %}
 

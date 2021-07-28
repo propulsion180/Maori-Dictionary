@@ -2,14 +2,29 @@
 
 {% block title %}Maōri Dictionary | Home{% endblock %}
 
-{% block heading %}Maōri - English Dictionary{% endblock %}
+{% block heading %}<p align="centre">Maōri - English Dictionary</p>
+    {% if logged_in is true %}
+   <p align="centre">
+        <button onclick="window.location.href = '/logout'" style="height: 50px; width: 100px">Logout</button>
+        <button onclick="window.location.href = '/add_category'" style="height: 50px; width: 100px">Add Category</button>
+        <button onclick="window.location.href = '/addword'"style="height: 50px; width: 100px">Add Word</button>
+    </p>
+
+{% else %}
+
+    <p align="centre">
+        <button onclick="window.location.href = '/login'"  style="height: 50px; width: 100px">Login</button>
+        <button onclick="window.location.href = '/signup'" style="height: 50px; width: 100px">Signup</button>
+    </p>
+
+{% endif %}
+{% endblock %}
 
 {% block main %}
 
 {% if logged_in is true %}
     Hello {{ session['firstname'] }}
-    <button onclick="window.location.href = '\add_category'">Add Category</button>
-    <button onclick="window.location.href = '\addword">Add Word</button>
+
 
 {% endif %}
 <br>

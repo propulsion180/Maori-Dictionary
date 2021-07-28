@@ -168,8 +168,8 @@ def render_signup():
 def render_addword():
     if request.method == 'POST':
         print(request.form)
-        maori = request.form.get('maori').strip()
-        english = request.form.get('english').strip()
+        maori = request.form.get('maori').strip().lower()
+        english = request.form.get('english').strip().lower()
         category = request.form.get('category')
         level = request.form.get('level')
         definition = request.form.get('definition').title()
@@ -298,6 +298,12 @@ def deleteword():
 def render_editwordpage():
     wordid = request.args.get("id")
     datetime = get_datetime()
+    new_maori = request.form.get("maori")
+    new_english = request.form.get("english")
+    new_category = request.form.get("category")
+    new_level = request.form.get("level")
+    new_definition = request.form.get("definition")
+
     con = create_connection('maori_dictionary.db')
     query = "SELECT maori, english, category, definition, level FROM dictionary_values WHERE id = ?"
     cur = con.cursor()
@@ -306,25 +312,21 @@ def render_editwordpage():
     con.commit()
     con.close()
 
-    new_maori = request.form.get("maori").lower()
-    new_english = request.form.get("english").strip().lower()
-    new_category = request.form.get("category")
-    new_level = request.form.get("level")
-    new_definiton = request.form.get("definition").title()
+
 
     con = create_connection('maori_dictionary.db')
-    query = "INSERT INTO dictionary_values (maori, english, category, definition, level, datetime_modified) " \
-            "VALUES(?,?,?,?,?,?)"
+    query = "UPDATE dictionary_values SET maori=?, english=?, category=?, definition=?, level=?, datetime_modified=? WHERE id=? "
+
 
     cur = con.cursor()
     try:
-        cur.execute(query, (new_maori, new_english, new_category, new_definition, new_level, datetime))  # this line actually executes the query
+        cur.execute(query, (new_maori, new_english, new_category, new_definition, new_level, datetime, wordid))  # this line actually executes the query
     except sqlite3.IntegrityError:
-        return redirect('/?message=you+screwed+something+up')
+        return redirect("/?message=Sorry but your edit has failed. To try again navigate to the word and press the edit button.")
 
     con.commit()
     con.close()
-    print(editted)
+    print("edited")
 
     return return_page('editword.html', word_list=word_list, logged_in=is_logged_in())
 

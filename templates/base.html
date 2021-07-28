@@ -24,12 +24,9 @@
 			<ul>
                 <li><a href="\">Home</a></li>
                 {% for id, category in categories.items() %}
-                    <li><a href="\categorypage?category={{ id }}">{{ category|title }}</a></li>
+                    <li><a href="/categorypage?category={{ id }}">{{ category|title }}</a></li>
                 {% endfor %}
-                <li><a href="\signup">Signup</a></li>
-                <li><a href="\login">Login</a></li>
-                <li><a href="\logout">Logout</a></li>
-                <li><a href="\editword">Edit Word</a></li>
+
 			</ul>
 		</nav>
 
