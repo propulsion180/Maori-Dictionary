@@ -36,6 +36,29 @@ def get_datetime():
     return date.strftime("%d/%m/%Y")
 
 
+def duplicate_check(m, e, c, d, l):
+    con = create_connection("maori_dictionary.db")
+
+    query = "SELECT maori, english, category, definintion, level, picture FROM dictionary_values WHERE maori=?, english=?, category=?, definition=?, level=?"
+
+    cur = con.cursor()
+    cur.execute(query, (m, e, c, d, l))
+    values = cur.fetchall()
+    print(values)
+    con.close()
+
+
+def validity_checker(m, e, c, d, l):
+    if m <= 0 or e <= 0 or  c 0 or d == 0 or l =
+
+
+    if values == None:
+        return false
+    else:
+        return true
+
+
+
 @app.route('/')
 def render_home():
     message = request.args.get("message")
@@ -178,21 +201,25 @@ def render_addword():
         datetime = get_datetime()
 
         print(level)
+        if duplicate_check(maori, english, category, definition, level) == true :
+            return redirect('/?message=Sorry but this word all ready exists. Please check existing words.')
+        else:
 
-        con = create_connection('maori_dictionary.db')
+            con = create_connection('maori_dictionary.db')
 
-        query = "INSERT INTO dictionary_values (maori, english, category, definition, level, picture, userid, datetime_modified) " \
+            query = "INSERT INTO dictionary_values (maori, english, category, definition, level, picture, userid, datetime_modified) " \
                 "VALUES(?,?,?,?,?,?,?,?)"
 
-        cur = con.cursor()  # You need this line next
+            cur = con.cursor()  # You need this line next
 
-        try:
-            cur.execute(query, (maori, english, category, definition, level, image, userid, datetime))  # this line actually executes the query
-        except sqlite3.IntegrityError:
-            return redirect('/addwords?error=you+screwed+something+up')
+            try:
+                cur.execute(query, (maori, english, category, definition, level, image, userid, datetime))  # this line actually executes the query
+            except sqlite3.IntegrityError:
+                return redirect('/addwords?error=you+screwed+something+up')
 
-        con.commit()
-        con.close()
+            con.commit()
+            con.close()
+
     return return_page('addword.html', logged_in=is_logged_in())
 
 

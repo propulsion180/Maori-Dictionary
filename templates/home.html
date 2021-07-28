@@ -31,6 +31,10 @@
 <br>
 This is the main page of my Maori Dictionary. click on the three lines or click on a category to see maori words and their meanings.
 
+{% if message == None %}
 
-{{ message }}
+{% else %}
+    {{ message }}
+{% endif %}
+
 {% endblock %}
