@@ -1,16 +1,16 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {# Tells the website that this is an extension of the base.html #}
 
-{% block title %}Maōri Dictionary | Home{% endblock %}
+{% block title %}Maōri Dictionary | Home{% endblock %} {# The title #}
 
-{% block heading %}<p align="centre">Maōri - English Dictionary</p>
-    {% if logged_in is true %}
+{% block heading %}<p align="centre">Maōri - English Dictionary</p> {# The heading #}
+    {% if logged_in is true %} {# If a user is logged in these buttons are shown. #}
    <p align="centre">
-        <button onclick="window.location.href = '/logout'" style="height: 50px; width: 100px">Logout</button>
+        <button id="delete button" onclick="if(window.confirm('Are you sure you want to logout ?')) {window.location.href = '/logout'}" style="height: 50px; width: 100px">Logout</button>
         <button onclick="window.location.href = '/add_category'" style="height: 50px; width: 100px">Add Category</button>
         <button onclick="window.location.href = '/addword'"style="height: 50px; width: 100px">Add Word</button>
     </p>
 
-{% else %}
+{% else %} {# If no user is logged in then these buttons are shown #}
 
     <p align="centre">
         <button onclick="window.location.href = '/login'"  style="height: 50px; width: 100px">Login</button>
@@ -20,9 +20,9 @@
 {% endif %}
 {% endblock %}
 
-{% block main %}
+{% block main %} {# The main block #}
 
-{% if logged_in is true %}
+{% if logged_in is true %} {# If a user is logged in a personalised message is displayed. #}
     Hello {{ session['firstname'] }}
 
 
@@ -31,7 +31,7 @@
 <br>
 This is the main page of my Maori Dictionary. click on the three lines or click on a category to see maori words and their meanings.
 <p>
-{% if message == None %}
+{% if message == None %} {# If there is no message then nothing is displayed. But if there is a message then it is displayed. #}
 
 {% else %}
     {{ message }}

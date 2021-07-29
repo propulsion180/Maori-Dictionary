@@ -1,26 +1,22 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {# Tells the website that this is a extension of base.html #}
 
-{% block title %}Word{% endblock %}
+{% block title %}Word{% endblock %} {# The title #}
 
-{% block heading %}Word
+{% block heading %}Word{% endblock %} {# The heading #}
 
-
-
-{% endblock %}
-
-{% block main %}
-    <div class="word-box" >
-        <h3>{{ oneword[1] }}</h3>
-        <p>{{ oneword[2] }}</p>
+{% block main %} {#  The main block #}
+    <div class="word-box" > {# Displays all the information about the word. #}
+        <h3>{{ oneword[1]|title }}</h3>
+        <p>{{ oneword[2]|title }}</p>
         <p><strong>Category:</strong>{{ category|title }}</p>
-        <p><strong>Definition:</strong>{{ oneword[4] }}</p>
+        <p><strong>Definition:</strong>{{ oneword[4]|title }}</p>
         <p><strong>Level:</strong>{{ oneword[5] }}</p>
         <img src="static/images/{{ oneword[6] }}.png">
-        <p>This was modified on the {{ oneword[8] }} by {{ fname }} {{ lname }} . Editor's email is {{ email }}</p>
+        <p>This was modified on the {{ oneword[8] }} by {{ fname }} {{ lname }} . Editor's email is {{ email }}</p> {# Tells the user when and by who the word was lat modified by and their email. #}
     </div>
 
-    {%if logged_in is true %}
-        <button id="delete button" onclick="if(window.confirm('Are you sure you want to do this karl?')) {window.location.href = '/delete_word?word={{ oneword[0] }}'}" style="height: 50px; width: 100px">Delete Word </button>
+    {%if logged_in is true %} {#  If the user is logged in these buttons will appear. It allows the user to delete or edit the word. #}
+        <button id="delete button" onclick="if(window.confirm('Are you sure you want to delete this word ?')) {window.location.href = '/delete_word?word={{ oneword[0] }}'}" style="height: 50px; width: 100px">Delete Word </button>
         <button onclick="window.location.href = '/editword?id=' + {{ oneword[0] }}" style="height: 50px; width: 100px">Edit</button>
     {% endif %}
 

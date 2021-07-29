@@ -1,25 +1,25 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {# Tells the website that it is an extension of base.html #}
 
-{% block title %}{{ category[1]|title }}{% endblock %}
+{% block title %}{{ category[1]|title }}{% endblock %} {#  The title #}
 
 {% block heading %}
-    <p align="centre">{{ category[1]|title }}</p>
-{% if logged_in is true %}
-    <p align="centre"><button onclick="window.location.href = '/delete_category?category={{ category[0] }}'" style="height: 50px; width: 100px" align="center">Delete Category</button></p>
+    <p align="centre">{{ category[1]|title }}</p> {# The heading #}
+{% if logged_in is true %} {# If a user is logged in a button will allow the user to delete the category that the user is on. #}
+    <p align="centre"><button id="delete button" onclick="if(window.confirm('Are you sure you want to delete this category ?')) {window.location.href = '/delete_category?category={{ category[0] }}'}" style="height: 50px; width: 100px">Delete Category</button></p>
 
 {% endif %}
 {% endblock %}
 
-{% block main %}
-    {% if words|length == 0 %}
+{% block main %} {#  The main block #}
+    {% if words|length == 0 %}{#  If there is nothing in the category then the message is shown otherwise all the words in the category. #}
         <p>
             There is no words in this category. Please add some using the addword button on the home page.
         </p>
     {% else %}
         {% for word in words %}
-             <div class="word-box" onclick="window.location = '/wordpage?word={{ word[0] }}&category={{ categoryname }}'">
-                <h3>{{ word[1] }}</h3>
-                <p>{{ word[2] }}</p>
+             <div class="word-box" onclick="window.location = '/wordpage?word={{ word[0] }}&category={{ categoryname }}'"> {# When The word is clicked the user is sent to the wordpage with that word. #}
+                <h3>{{ word[1]|title }}</h3>
+                <p>{{ word[2]|title }}</p>
                 <p><strong>Category:</strong>{{ category[1]|title }}</p>
                 <p><strong>Level:</strong>{{ word[5] }}</p>
                 <img src="static/images/{{ word[6] }}.png">
