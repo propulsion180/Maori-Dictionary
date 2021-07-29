@@ -18,10 +18,10 @@
     {% else %}
         {% for word in words %}
              <div class="word-box" onclick="window.location = '/wordpage?word={{ word[0] }}&category={{ categoryname }}'"> {# When The word is clicked the user is sent to the wordpage with that word. #}
-                <h3>{{ word[1]|title }}</h3>
-                <p>{{ word[2]|title }}</p>
-                <p><strong>Category:</strong>{{ category[1]|title }}</p>
-                <p><strong>Level:</strong>{{ word[5] }}</p>
+                <h3>Maori: {{ word[1]|title }}</h3>
+                <p>English: {{ word[2]|title }}</p>
+                <p><strong>Category: </strong>{{ category[1]|title }}</p>
+                <p><strong>Level: </strong>{{ word[5] }}</p>
                 <img src="static/images/{{ word[6] }}.png">
             </div>
         {% endfor %}

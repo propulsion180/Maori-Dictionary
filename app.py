@@ -54,7 +54,7 @@ def duplicate_check(m, e, c, d, l): # Checks if any words that are inputted alre
 
 
 def validity_checker(m, e, c, d, l): # Checks if words that are added are valid.
-    if len(m) <= 0 or len(e) <= 0 or c == 0 or len(d) == 0 or l == 0 or int(l) > 10:
+    if len(m) <= 0 or len(e) <= 0 or c == 0 or len(d) == 0 or l == 0 or int(l) > 10 or type(m) == int or type(e) == int or type(d) == int:
         return False
     else:
         return True #If the word is not valid False is returned otherwise True is returned.
@@ -290,16 +290,18 @@ def render_editwordpage():
     con.commit()
     con.close()
 
-
-    con = create_connection('maori_dictionary.db') # This opens a connection
-    query = "UPDATE dictionary_values SET maori=?, english=?, category=?, definition=?, level=?, date_modified=? WHERE id=? " # This query is used to update values in the database.
-    cur = con.cursor()
-    try:
-        cur.execute(query, (new_maori, new_english, new_category, new_definition, new_level, date, wordid))  # This line  executes the query and inserts the data.
-    except sqlite3.IntegrityError:
-        return redirect("/?message=Sorry but your edit has failed. To try again navigate to the word and press the edit button.") # If the query fails then the user is sent to this page.
-    con.commit()
-    con.close()
+    if validity_checker(new_maori, new_english, new_category, new_definition, new_level) == False:
+        return redirect('/?message=You entered invalid values.')
+    else:
+        con = create_connection('maori_dictionary.db') # This opens a connection
+        query = "UPDATE dictionary_values SET maori=?, english=?, category=?, definition=?, level=?, date_modified=? WHERE id=? " # This query is used to update values in the database.
+        cur = con.cursor()
+        try:
+            cur.execute(query, (new_maori, new_english, new_category, new_definition, new_level, date, wordid))  # This line  executes the query and inserts the data.
+        except sqlite3.IntegrityError:
+            return redirect("/?message=Sorry but your edit has failed. To try again navigate to the word and press the edit button.") # If the query fails then the user is sent to this page.
+        con.commit()
+        con.close()
     return return_page('editword.html', word_list=word_list, logged_in=is_logged_in())  # This renders the editword page and sends data to the HTML page.
 
 
