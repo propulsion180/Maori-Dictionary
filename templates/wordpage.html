@@ -3,11 +3,9 @@
 {% block title %}Word{% endblock %}
 
 {% block heading %}Word
-{% if logged_in is true %}
-    <button id="delete button" onclick="window.location.href = '/delete_word?word={{ oneword[0] }}'" style="height: 50px; width: 100px">Delete Word</button>
-    <button id="delete button" onclick="if(window.confirm('Are you sure you want to do this karl?')) {window.location.href = '/delete_word?word={{ oneword[0] }}'}"> </button>
 
-{% endif %}
+
+
 {% endblock %}
 
 {% block main %}
@@ -21,6 +19,9 @@
         <p>This was modified on the {{ oneword[8] }} by {{ fname }} {{ lname }} . Editor's email is {{ email }}</p>
     </div>
 
+    {%if logged_in is true %}
+        <button id="delete button" onclick="if(window.confirm('Are you sure you want to do this karl?')) {window.location.href = '/delete_word?word={{ oneword[0] }}'}" style="height: 50px; width: 100px">Delete Word </button>
+        <button onclick="window.location.href = '/editword?id=' + {{ oneword[0] }}" style="height: 50px; width: 100px">Edit</button>
+    {% endif %}
 
-    <button onclick="window.location.href = '/editword?id=' + {{ oneword[0] }}">Edit</button>
 {% endblock %}

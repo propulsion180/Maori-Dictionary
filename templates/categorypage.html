@@ -3,9 +3,9 @@
 {% block title %}{{ category[1]|title }}{% endblock %}
 
 {% block heading %}
-{{ categoryname|title }}
+    <p align="centre">{{ category[1]|title }}</p>
 {% if logged_in is true %}
-     <button onclick="window.location.href = '/delete_category?category={{ category[0] }}'" style="height: 50px; width: 100px" align="center">Delete Category</button>
+    <p align="centre"><button onclick="window.location.href = '/delete_category?category={{ category[0] }}'" style="height: 50px; width: 100px" align="center">Delete Category</button></p>
 
 {% endif %}
 {% endblock %}
@@ -21,7 +21,7 @@
                 <h3>{{ word[1] }}</h3>
                 <p>{{ word[2] }}</p>
                 <p><strong>Category:</strong>{{ category[1]|title }}</p>
-                <p><strong>Level:</strong>{{ word[4] }}</p>
+                <p><strong>Level:</strong>{{ word[5] }}</p>
                 <img src="static/images/{{ word[6] }}.png">
             </div>
         {% endfor %}
